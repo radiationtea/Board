@@ -6,11 +6,11 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 109743122068.dkr.ecr.ap-northeast-2.amazonaws.com
-      - REPOSITORY_URI=109743122068.dkr.ecr.ap-northeast-2.amazonaws.com/3ccert-notification
+      - REPOSITORY_URI=109743122068.dkr.ecr.ap-northeast-2.amazonaws.com/3ccert-board
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
-      - ENVIROMENT_PARMS=$(aws ssm get-parameter --name "/3ccert/notification/enviroment" --output json --with-decryption)
-      - ORMCONFIG_PARMS=$(aws ssm get-parameter --name "/3ccert/notification/ormconfig" --output json --with-decryption)
+      - ENVIROMENT_PARMS=$(aws ssm get-parameter --name "/3ccert/board/enviroment" --output json --with-decryption)
+      - ORMCONFIG_PARMS=$(aws ssm get-parameter --name "/3ccert/board/ormconfig" --output json --with-decryption)
       - echo $ENVIROMENT_PARMS | sed ':a;N;$!ba;s/\n/\\n/g' | jq ".Parameter.Value" -r > .env
       - echo Loaded .env file
       - cat .env
@@ -30,7 +30,7 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - printf '[{"name":"3ccert-notification","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"3ccert-board","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
     files: imagedefinitions.json
