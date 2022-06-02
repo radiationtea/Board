@@ -12,10 +12,12 @@ export class CategoriesController {
   }
 
   @Get()
-  async listCategories (): Promise<ResponseBody<Categories[]>> {
+  async listCategories (): Promise<ResponseBody<{ categories: Categories[] }>> {
     return {
       success: true,
-      data: await this.categoriesService.listCategories()
+      data: {
+        categories: await this.categoriesService.listCategories()
+      }
     }
   }
 }
