@@ -25,8 +25,11 @@ export class CategoriesService {
   }
 
   public getSubcategory (subId: number) {
-    return this.subcategories.findOne(subId, {
-      relations: ['parent']
+    return this.subcategories.findOne({
+      relations: ['parent'],
+      where: {
+        subcategoryId: subId
+      }
     })
   }
 }

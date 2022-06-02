@@ -15,6 +15,10 @@ export class UsersService {
   }
 
   public getUser (userId: string) {
-    return this.users.findOne(userId)
+    return this.users.findOne({
+      where: {
+        userId
+      }
+    })
   }
 }
