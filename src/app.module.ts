@@ -5,6 +5,8 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { AuthMiddleware } from './auth/auth.middleware'
 import { AuthModule } from './auth/auth.module'
 import { HealthModule } from './health/health.module'
+import { PostsModule } from './posts/posts.module'
+import { CategoriesModule } from './categories/categories.module'
 
 @Module({
   imports: [
@@ -14,7 +16,9 @@ import { HealthModule } from './health/health.module'
     }),
     TypeOrmModule.forRoot(),
     AuthModule,
-    HealthModule
+    HealthModule,
+    PostsModule,
+    CategoriesModule
   ]
 })
 export class AppModule implements NestModule {
