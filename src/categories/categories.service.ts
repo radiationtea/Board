@@ -69,4 +69,12 @@ export class CategoriesService {
       subcategoryId
     }, data)
   }
+
+  public async deleteSubcategory (subcategoryId: number) {
+    await this.subcategories.delete(subcategoryId)
+  }
+
+  public async deleteCategory (categoryId: number) {
+    await this.categories.delete(categoryId)
+  }
 }
