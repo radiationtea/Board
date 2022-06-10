@@ -7,6 +7,7 @@ import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/createCategory.dto'
 import { CreateSubcategoryDto } from './dto/CreateSubcategory.dto'
 import { EditCategoryDto } from './dto/EditCategory.dto'
+import { EditSubcategoryDto } from './dto/EditSubcategory.dto'
 
 @Controller('categories')
 export class CategoriesController {
@@ -76,6 +77,29 @@ export class CategoriesController {
     }
 
     await this.categoriesService.editCategory(parsedCategoryId, body)
+
+    return {
+      success: true
+    }
+  }
+
+  @Put(':category/:subcate')
+  @Require('MANAGE_CATEGORIES')
+  @UseGuards(PermissionsGuard)
+  async editSubcategory (@Body() body: EditSubcategoryDto, @Param('category') _: string, @Param('subcate') subcate: string):
+    Promise<ResponseBody<undefined>> {
+    const parsedSubcategoryId = parseInt(subcate)
+
+    if (Number.isNaN(parsedSubcategoryId)) {
+      throw new BadRequestException()
+    }
+
+    const isExist = await this.categoriesService.getSubcategory(parsedSubcategoryId)
+    if (!isExist) {
+      throw new NotFoundException()
+    }
+
+    await this.categoriesService.editCategory(parsedSubcategoryId, body)
 
     return {
       success: true
