@@ -21,7 +21,12 @@ export class PostsService {
     return this.posts.find({
       skip: page * perPage,
       take: perPage,
-      where: filter || undefined
+      where: filter || undefined,
+      select: ['user', 'closed', 'postId', 'subCategory', 'createdAt']
     })
+  }
+
+  getPost (postId: number): Promise<Posts> {
+    return this.posts.findOne(postId)
   }
 }
