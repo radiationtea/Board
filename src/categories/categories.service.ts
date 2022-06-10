@@ -4,6 +4,8 @@ import { Repository } from 'typeorm'
 import { Categories, Subcategories } from './categories.entities'
 import { CreateCategoryDto } from './dto/createCategory.dto'
 import { CreateSubcategoryDto } from './dto/CreateSubcategory.dto'
+import { EditCategoryDto } from './dto/EditCategory.dto'
+import { EditSubcategoryDto } from './dto/EditSubcategory.dto'
 
 @Injectable()
 export class CategoriesService {
@@ -23,6 +25,14 @@ export class CategoriesService {
   public listCategories () {
     return this.categories.find({
       relations: ['children']
+    })
+  }
+
+  public getCategory (cateId: number) {
+    return this.categories.findOne({
+      where: {
+        categoryId: cateId
+      }
     })
   }
 
@@ -46,5 +56,17 @@ export class CategoriesService {
       parentId: categoryId
     })
     return result.generatedMaps[0].subcategoryId
+  }
+
+  public async editCategory (categoryId: number, data: EditCategoryDto) {
+    await this.categories.update({
+      categoryId
+    }, data)
+  }
+
+  public async editSubcategory (subcategoryId: number, data: EditSubcategoryDto) {
+    await this.subcategories.update({
+      subcategoryId
+    }, data)
   }
 }

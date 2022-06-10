@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { Require } from 'src/permissions/permissions.decorator'
 import { PermissionsGuard } from 'src/permissions/permissions.guard'
 import { ResponseBody } from '../interfaces/ResponseBody'
@@ -6,6 +6,7 @@ import { Categories } from './categories.entities'
 import { CategoriesService } from './categories.service'
 import { CreateCategoryDto } from './dto/createCategory.dto'
 import { CreateSubcategoryDto } from './dto/CreateSubcategory.dto'
+import { EditCategoryDto } from './dto/EditCategory.dto'
 
 @Controller('categories')
 export class CategoriesController {
@@ -56,6 +57,28 @@ export class CategoriesController {
       data: {
         subcategoryId: result
       }
+    }
+  }
+
+  @Put(':category')
+  @Require('MANAGE_CATEGORIES')
+  @UseGuards(PermissionsGuard)
+  async editCategory (@Body() body: EditCategoryDto, @Param('category') categoryId: string):
+    Promise<ResponseBody<undefined>> {
+    const parsedCategoryId = parseInt(categoryId)
+    if (Number.isNaN(parsedCategoryId)) {
+      throw new BadRequestException()
+    }
+
+    const isExist = await this.categoriesService.getCategory(parsedCategoryId)
+    if (!isExist) {
+      throw new NotFoundException()
+    }
+
+    await this.categoriesService.editCategory(parsedCategoryId, body)
+
+    return {
+      success: true
     }
   }
 }
