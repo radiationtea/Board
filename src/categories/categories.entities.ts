@@ -10,6 +10,18 @@ export class Categories {
   readonly label: string
 
   @Column()
+  readonly description: string
+
+  @Column({ name: 'eval_date_start' })
+  readonly evalDateStart: string
+
+  @Column({ name: 'eval_date_stop' })
+  readonly evalDateStop: string
+
+  @Column({ name: 'max_score' })
+  readonly maxScore: number
+
+  @Column()
   readonly manager: string
 
   @ManyToOne(() => Users, { eager: true })
@@ -30,6 +42,9 @@ export class Subcategories {
 
   @Column()
   readonly label: string
+
+  @Column()
+  readonly score: number
 
   @ManyToOne(() => Categories, (cate) => cate.children)
   @JoinColumn({ name: 'categoryid' })
