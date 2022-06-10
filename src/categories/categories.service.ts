@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Categories, Subcategories } from './categories.entities'
 import { CreateCategoryDto } from './dto/createCategory.dto'
+import { CreateSubcategoryDto } from './dto/CreateSubcategory.dto'
 
 @Injectable()
 export class CategoriesService {
@@ -37,5 +38,13 @@ export class CategoriesService {
   public async createCategory (data: CreateCategoryDto) {
     const result = await this.categories.insert(data)
     return result.generatedMaps[0].categoryId
+  }
+
+  public async createSubcategory (categoryId: number, data: CreateSubcategoryDto) {
+    const result = await this.subcategories.insert({
+      ...data,
+      parentId: categoryId
+    })
+    return result.generatedMaps[0].subcategoryId
   }
 }
