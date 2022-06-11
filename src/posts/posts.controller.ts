@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Query, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { ClientAuthGuard } from 'src/auth/client-auth.guard'
 import { CategoriesService } from 'src/categories/categories.service'
@@ -148,6 +148,19 @@ export class PostsController {
   async deletePosts (@Param('id') postId: number):
    Promise<ResponseBody<undefined>> {
     await this.postsService.deletePost(postId)
+    return {
+      success: true
+    }
+  }
+
+  @Put(':id/@me')
+  @UseGuards(ClientAuthGuard)
+  async editPosts (@Res() res: Response, @Body() body: CreatePostDto, @Param('id') postId: number):
+    Promise<ResponseBody<undefined>> {
+    const post = await this.postsService.getPost(postId)
+    if (res.locals.userId !== post?.userId) throw new ForbiddenException()
+
+    await this.postsService.editPost(postId, body)
     return {
       success: true
     }

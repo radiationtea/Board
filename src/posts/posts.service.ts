@@ -44,4 +44,8 @@ export class PostsService {
   async deletePost (postId: number) {
     await this.posts.delete(postId)
   }
+
+  async editPost (postId: number, body: CreatePostDto) {
+    await this.posts.update(postId, body)
+  }
 }
