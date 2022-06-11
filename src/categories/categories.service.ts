@@ -77,4 +77,29 @@ export class CategoriesService {
   public async deleteCategory (categoryId: number) {
     await this.categories.delete(categoryId)
   }
+
+  public async checkEvalable (subcategoryId: number) {
+    const subcategory = await this.subcategories.findOne(subcategoryId, {
+      relations: ['parent']
+    })
+
+    const today = new Date()
+    const [, startMonth, startDate] =
+      subcategory.parent.evalDateStart
+        .match(/(\d{2})(\d{2})/)
+        .map((v) => parseInt(v))
+
+    const [, endMonth, endDate] =
+      subcategory.parent.evalDateStop
+        .match(/(\d{2})(\d{2})/)
+        .map((v) => parseInt(v))
+
+    if (startMonth > today.getMonth() + 1) return false
+    if (startDate > today.getDate()) return false
+
+    if (endMonth < today.getMonth() + 1) return false
+    if (endDate < today.getDate()) return false
+
+    return true
+  }
 }

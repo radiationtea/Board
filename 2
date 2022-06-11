@@ -130,26 +130,8 @@ export class PostsController {
 
   @Delete(':id/@me')
   @UseGuards(ClientAuthGuard)
-  async deleteMyPosts (@Res() res: Response, @Param('id') postId: number):
+  async deleteMyPosts (@Res() res: Response, @Param('id') postId: string):
     Promise<ResponseBody<undefined>> {
-    const post = await this.postsService.getPost(postId)
-    if (res.locals.userId !== post?.userId) throw new ForbiddenException()
 
-    await this.postsService.deletePost(postId)
-
-    return {
-      success: true
-    }
-  }
-
-  @Delete(':id')
-  @Require('MANAGE_POSTS')
-  @UseGuards(PermissionsGuard)
-  async deletePosts (@Param('id') postId: number):
-   Promise<ResponseBody<undefined>> {
-    await this.postsService.deletePost(postId)
-    return {
-      success: true
-    }
   }
 }

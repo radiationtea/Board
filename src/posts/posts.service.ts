@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { CreatePostDto } from './dto/CreatePost.dto'
 import { Posts } from './posts.entity'
 
 @Injectable()
@@ -28,5 +29,19 @@ export class PostsService {
 
   getPost (postId: number): Promise<Posts> {
     return this.posts.findOne(postId)
+  }
+
+  async createPost (userId: string, data: CreatePostDto) {
+    const result = await this.posts.insert({
+      userId,
+      subId: data.subcategoryId,
+      content: data.content
+    })
+
+    return result.generatedMaps[0].postId
+  }
+
+  async deletePost (postId: number) {
+    await this.posts.delete(postId)
   }
 }

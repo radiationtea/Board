@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { Users } from 'src/users/users.entity'
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
