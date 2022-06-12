@@ -30,3 +30,18 @@ export class Posts {
   @Column()
   readonly closed: boolean
 }
+
+@Entity()
+export class History {
+  @PrimaryGeneratedColumn({ name: 'hisid' })
+  readonly historyId: number
+
+  @Column({ name: 'subid' })
+  readonly subcategoryId: number
+
+  @Column({ name: 'teacherid' })
+  readonly teacherId: string
+
+  @Column({ name: 'userid' })
+  readonly userId: string
+}

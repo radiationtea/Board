@@ -2,17 +2,22 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreatePostDto } from './dto/CreatePost.dto'
-import { Posts } from './posts.entity'
+import { ActionType } from './dto/PostAction.dto'
+import { History, Posts } from './posts.entity'
 
 @Injectable()
 export class PostsService {
   private posts: Repository<Posts>
+  private history: Repository<History>
 
   constructor (
     @InjectRepository(Posts)
-      posts: Repository<Posts>
+      posts: Repository<Posts>,
+    @InjectRepository(History)
+      history: Repository<History>
   ) {
     this.posts = posts
+    this.history = history
   }
 
   queryPosts (page = 0, perPage = 10, filter?: {
@@ -47,5 +52,18 @@ export class PostsService {
 
   async editPost (postId: number, body: CreatePostDto) {
     await this.posts.update(postId, body)
+  }
+
+  async actionPost (postId: number, type: ActionType, userId: string) {
+    await this.posts.update(postId, { closed: true })
+
+    if (type === 'RESOLVE') {
+      const post = await this.getPost(postId)
+      await this.history.insert({
+        subcategoryId: post.subId,
+        teacherId: userId,
+        userId: post.userId
+      })
+    }
   }
 }
