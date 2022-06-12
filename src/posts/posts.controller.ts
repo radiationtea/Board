@@ -170,13 +170,16 @@ export class PostsController {
   @Post(':id/@action')
   @UseGuards(ClientAuthGuard)
   async postAction (@Res() res: Response, @Body() body: PostActionDto, @Param('id') postId: number): Promise<ResponseBody<undefined>> {
-    const isPermitted = await this.permsService.hasPermission(res.locals.userId, `CATEGORY:${postId}:WRITE`)
+    const post = await this.postsService.getPost(postId)
+    if (!post) throw new NotFoundException()
+
+    const isPermitted = await this.permsService.hasPermission(res.locals.userId, `CATEGORY:${post.subCategory.parentId}:WRITE`)
 
     if (!isPermitted) {
       throw new Error()
     }
 
-    await this.postsService.actionPost(postId, body.action, res.locals.uerId)
+    await this.postsService.actionPost(post, body.action, res.locals.uerId)
 
     return {
       success: true

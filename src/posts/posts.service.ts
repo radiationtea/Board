@@ -54,11 +54,10 @@ export class PostsService {
     await this.posts.update(postId, body)
   }
 
-  async actionPost (postId: number, type: ActionType, userId: string) {
-    await this.posts.update(postId, { closed: true })
+  async actionPost (post: Posts, type: ActionType, userId: string) {
+    await this.posts.update(post.postId, { closed: true })
 
     if (type === 'RESOLVE') {
-      const post = await this.getPost(postId)
       await this.history.insert({
         subcategoryId: post.subId,
         teacherId: userId,
