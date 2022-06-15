@@ -25,7 +25,6 @@ export class PostsService {
   }
 
   queryPosts (page = 0, perPage = 10, filter?: {
-    closed?: boolean,
     userId?: string
   }): Promise<Posts[]> {
     return this.posts.find({
