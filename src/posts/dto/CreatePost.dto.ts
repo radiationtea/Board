@@ -1,9 +1,7 @@
-import { Transform } from 'class-transformer'
-import { IsNumberString, MaxLength } from 'class-validator'
+import { IsInt, MaxLength } from 'class-validator'
 
 export class CreatePostDto {
-  @IsNumberString()
-  @Transform(() => Number)
+  @IsInt()
   readonly subcategoryId: number
 
   @MaxLength(100)

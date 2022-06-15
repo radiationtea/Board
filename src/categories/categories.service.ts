@@ -94,11 +94,8 @@ export class CategoriesService {
         .match(/(\d{2})(\d{2})/)
         .map((v) => parseInt(v))
 
-    if (startMonth > today.getMonth() + 1) return false
-    if (startDate > today.getDate()) return false
-
-    if (endMonth < today.getMonth() + 1) return false
-    if (endDate < today.getDate()) return false
+    if (startMonth >= today.getMonth() + 1 && startDate > today.getDate()) return false
+    if (endMonth <= today.getMonth() + 1 && endDate <= today.getDate()) return false
 
     return true
   }

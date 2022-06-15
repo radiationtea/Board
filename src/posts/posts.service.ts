@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { IntegrationsService } from 'src/integrations/intergrations.service'
 import { Repository } from 'typeorm'
 import { CreatePostDto } from './dto/CreatePost.dto'
 import { ActionType } from './dto/PostAction.dto'
@@ -9,15 +10,18 @@ import { History, Posts } from './posts.entity'
 export class PostsService {
   private posts: Repository<Posts>
   private history: Repository<History>
+  private integrations: IntegrationsService
 
   constructor (
     @InjectRepository(Posts)
       posts: Repository<Posts>,
     @InjectRepository(History)
-      history: Repository<History>
+      history: Repository<History>,
+      integrations: IntegrationsService
   ) {
     this.posts = posts
     this.history = history
+    this.integrations = integrations
   }
 
   queryPosts (page = 0, perPage = 10, filter?: {
@@ -43,6 +47,9 @@ export class PostsService {
       content: data.content
     })
 
+    this.integrations.sendNotice(
+      'submitted', data.subcategoryId, userId)
+
     return result.generatedMaps[0].postId
   }
 
@@ -64,5 +71,10 @@ export class PostsService {
         userId: post.userId
       })
     }
+
+    this.integrations.sendNotice(
+      type === 'RESOLVE' ? 'accepted' : 'rejected',
+      post.subId,
+      post.userId)
   }
 }

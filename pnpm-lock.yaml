@@ -34,6 +34,7 @@ specifiers:
   tsconfig-paths: 4.0.0
   typeorm: '0.2'
   typescript: ^4.3.5
+  undici: ^5.5.1
 
 dependencies:
   '@nestjs/common': 8.4.5_kgmvgmqc4iohdboj3f7yqhrie4
@@ -50,6 +51,7 @@ dependencies:
   reflect-metadata: 0.1.13
   rxjs: 7.5.5
   typeorm: 0.2.45
+  undici: 5.5.1
 
 devDependencies:
   '@nestjs/cli': 8.2.6
@@ -3791,6 +3793,11 @@ packages:
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
     dev: true
+
+  /undici/5.5.1:
+    resolution: {integrity: sha512-MEvryPLf18HvlCbLSzCW0U00IMftKGI5udnjrQbC5D4P0Hodwffhv+iGfWuJwg16Y/TK11ZFK8i+BPVW2z/eAw==}
+    engines: {node: '>=12.18'}
+    dev: false
 
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}

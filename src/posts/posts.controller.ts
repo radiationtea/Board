@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, NotAcceptableException, NotFoundException, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { ClientAuthGuard } from 'src/auth/client-auth.guard'
 import { CategoriesService } from 'src/categories/categories.service'
@@ -74,7 +74,7 @@ export class PostsController {
   @Get(':id')
   @Require('VIEW_REQUESTS')
   @UseGuards(PermissionsGuard)
-  async getRequest (@Param('id') postId: number, @Res() res: Response):
+  async getRequest (@Param('id') postId: number, @Res({ passthrough: true }) res: Response):
     Promise<ResponseBody<{ post: Posts }>> {
     const post = await this.postsService.getPost(postId)
     if (!post) {
@@ -98,7 +98,7 @@ export class PostsController {
 
   @Get(':id/@me')
   @UseGuards(ClientAuthGuard)
-  async getMyRequest (@Res() res: Response, @Param('id') postId: number):
+  async getMyRequest (@Res({ passthrough: true }) res: Response, @Param('id') postId: number):
     Promise<ResponseBody<{ post: Posts }>> {
     const post = await this.postsService.getPost(postId)
     if (post.userId !== res.locals.userId) {
@@ -115,10 +115,11 @@ export class PostsController {
 
   @Post()
   @UseGuards(ClientAuthGuard)
-  async createPosts (@Res() res: Response, @Body() body: CreatePostDto):
+  async createPosts (@Res({ passthrough: true }) res: Response, @Body() body: CreatePostDto):
     Promise<ResponseBody<{ postId: number }>> {
     const isEvalable = await this.categoriesService.checkEvalable(body.subcategoryId)
-    if (!isEvalable) throw new ForbiddenException()
+    if (!isEvalable) throw new NotAcceptableException({ message: 'NOT_EVALABLE_YET' })
+
     const postId = await this.postsService.createPost(res.locals.userId, body)
 
     return {
@@ -131,7 +132,7 @@ export class PostsController {
 
   @Delete(':id/@me')
   @UseGuards(ClientAuthGuard)
-  async deleteMyPosts (@Res() res: Response, @Param('id') postId: number):
+  async deleteMyPosts (@Res({ passthrough: true }) res: Response, @Param('id') postId: number):
     Promise<ResponseBody<undefined>> {
     const post = await this.postsService.getPost(postId)
     if (res.locals.userId !== post?.userId) throw new ForbiddenException()
@@ -156,7 +157,8 @@ export class PostsController {
 
   @Put(':id/@me')
   @UseGuards(ClientAuthGuard)
-  async editPosts (@Res() res: Response, @Body() body: CreatePostDto, @Param('id') postId: number):
+  async editPosts
+  (@Res({ passthrough: true }) res: Response, @Body() body: CreatePostDto, @Param('id') postId: number):
     Promise<ResponseBody<undefined>> {
     const post = await this.postsService.getPost(postId)
     if (res.locals.userId !== post?.userId) throw new ForbiddenException()
@@ -169,11 +171,14 @@ export class PostsController {
 
   @Post(':id/@action')
   @UseGuards(ClientAuthGuard)
-  async postAction (@Res() res: Response, @Body() body: PostActionDto, @Param('id') postId: number): Promise<ResponseBody<undefined>> {
+  async postAction (@Res({ passthrough: true }) res: Response, @Body() body: PostActionDto, @Param('id') postId: number): Promise<ResponseBody<undefined>> {
     const post = await this.postsService.getPost(postId)
     if (!post) throw new NotFoundException()
 
-    const isPermitted = await this.permsService.hasPermission(res.locals.userId, `CATEGORY:${post.subCategory.parentId}:WRITE`)
+    const isPermitted =
+      await this.permsService.hasPermission(
+        res.locals.userId,
+        `CATEGORY:${post.subCategory.parentId}:WRITE`)
 
     if (!isPermitted) {
       throw new Error()
