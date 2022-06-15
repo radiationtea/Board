@@ -57,7 +57,10 @@ export class PostsService {
   }
 
   async editPost (postId: number, body: CreatePostDto) {
-    await this.posts.update(postId, body)
+    await this.posts.update(postId, {
+      subId: body.subcategoryId,
+      content: body.content
+    })
   }
 
   async actionPost (post: Posts, type: ActionType, userId: string) {

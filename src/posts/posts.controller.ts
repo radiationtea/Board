@@ -97,6 +97,7 @@ export class PostsController {
   async getMyRequest (@Res({ passthrough: true }) res: Response, @Param('id') postId: number):
     Promise<ResponseBody<{ post: Posts }>> {
     const post = await this.postsService.getPost(postId)
+    if (!post) throw new NotFoundException()
     if (post.userId !== res.locals.userId) {
       throw new ForbiddenException()
     }
@@ -131,6 +132,8 @@ export class PostsController {
   async deleteMyPosts (@Res({ passthrough: true }) res: Response, @Param('id') postId: number):
     Promise<ResponseBody<undefined>> {
     const post = await this.postsService.getPost(postId)
+    if (post.closed) throw new NotAcceptableException({ message: 'ALEADY_CLOSED' })
+
     if (res.locals.userId !== post?.userId) throw new ForbiddenException()
 
     await this.postsService.deletePost(postId)
@@ -146,6 +149,7 @@ export class PostsController {
   async deletePosts (@Param('id') postId: number):
    Promise<ResponseBody<undefined>> {
     await this.postsService.deletePost(postId)
+
     return {
       success: true
     }
@@ -158,6 +162,7 @@ export class PostsController {
     Promise<ResponseBody<undefined>> {
     const post = await this.postsService.getPost(postId)
     if (res.locals.userId !== post?.userId) throw new ForbiddenException()
+    if (post.closed) throw new NotAcceptableException({ message: 'ALEADY_CLOSED' })
 
     await this.postsService.editPost(postId, body)
     return {
@@ -177,10 +182,10 @@ export class PostsController {
         `CATEGORY:${post.subCategory.parentId}:WRITE`)
 
     if (!isPermitted) {
-      throw new Error()
+      throw new ForbiddenException()
     }
 
-    await this.postsService.actionPost(post, body.action, res.locals.uerId)
+    await this.postsService.actionPost(post, body.action, res.locals.userId)
 
     return {
       success: true
