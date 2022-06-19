@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module'
 import { HealthModule } from './health/health.module'
 import { PostsModule } from './posts/posts.module'
 import { CategoriesModule } from './categories/categories.module'
+import { FilesModule } from './files/files.module'
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { CategoriesModule } from './categories/categories.module'
     AuthModule,
     HealthModule,
     PostsModule,
-    CategoriesModule
+    CategoriesModule,
+    FilesModule
   ]
 })
 export class AppModule implements NestModule {

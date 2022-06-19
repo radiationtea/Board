@@ -1,6 +1,7 @@
 import { Subcategories } from '../categories/categories.entities'
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { Users } from '../users/users.entity'
+import { Files } from 'src/files/files.entity'
 
 @Entity()
 export class Posts {
@@ -29,6 +30,9 @@ export class Posts {
 
   @Column()
   readonly closed: boolean
+
+  @OneToMany(() => Files, (file) => file.post, { eager: true })
+  readonly files: Files[]
 }
 
 @Entity()
