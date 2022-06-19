@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { DeletedObject, DeleteObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { v4 as uuid } from 'uuid'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Repository } from 'typeorm'
@@ -47,5 +47,15 @@ export class FilesService {
     })
 
     return uploadLink
+  }
+
+  public async getFile (fileId: string) {
+    return await this.files.findOne(fileId, {
+      relations: ['post']
+    })
+  }
+
+  public async deleteFile (fileId: string) {
+    await this.files.delete(fileId)
   }
 }

@@ -1,9 +1,10 @@
-import { Body, Controller, ForbiddenException, NotFoundException, Post, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, NotFoundException, Param, Post, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { ClientAuthGuard } from 'src/auth/client-auth.guard'
 import { ResponseBody } from 'src/interfaces/ResponseBody'
 import { PermissionsService } from 'src/permissions/permissions.service'
 import { PostsService } from 'src/posts/posts.service'
+import { DeleteFileDto } from './dto/DeleteFile.dto'
 import { UploadFileDto } from './dto/UploadFile.dto'
 import { FilesService } from './files.service'
 
@@ -62,6 +63,48 @@ export class FilesController {
       data: {
         url
       }
+    }
+  }
+
+  @Delete(':fileId')
+  @UseGuards(ClientAuthGuard)
+  async deleteFile (
+    @Res({ passthrough: true }) res: Response,
+    @Param() { fileId }: DeleteFileDto): Promise<ResponseBody<undefined>> {
+    const file = await this.filesService.getFile(fileId)
+
+    if (!file) throw new NotFoundException()
+
+    const isPermitted =
+      await this.permsService.hasPermission(
+        res.locals.userId,
+        `CATEGORY:${file.post.subCategory.parentId}:WRITE`)
+
+    if (!isPermitted) {
+      throw new ForbiddenException()
+    }
+
+    await this.filesService.deleteFile(fileId)
+
+    return {
+      success: true
+    }
+  }
+
+  @Delete(':fileId/@me')
+  @UseGuards(ClientAuthGuard)
+  async deleteMyFile (
+    @Res({ passthrough: true }) res: Response,
+    @Param() { fileId }: DeleteFileDto): Promise<ResponseBody<undefined>> {
+    const file = await this.filesService.getFile(fileId)
+
+    if (!file) throw new NotFoundException()
+    if (file.post.userId !== res.locals.userId) throw new ForbiddenException()
+
+    await this.filesService.deleteFile(fileId)
+
+    return {
+      success: true
     }
   }
 }

@@ -1,4 +1,3 @@
-import { Subcategories } from 'src/categories/categories.entities'
 import { Posts } from 'src/posts/posts.entity'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
