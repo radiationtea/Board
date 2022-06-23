@@ -20,7 +20,7 @@ export class AuthService {
   public verifyClientToken (token: string) {
     try {
       const data = this.jwtService.verify(token)
-      return data?.sub
+      return data?.Userid
     } catch {
       return undefined
     }
