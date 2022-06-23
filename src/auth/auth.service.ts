@@ -18,10 +18,13 @@ export class AuthService {
   }
 
   public verifyClientToken (token: string) {
+    console.log(token)
     try {
       const data = this.jwtService.verify(token)
+      console.log(data)
       return data?.Userid
-    } catch {
+    } catch (e) {
+      console.log(e)
       return undefined
     }
   }
