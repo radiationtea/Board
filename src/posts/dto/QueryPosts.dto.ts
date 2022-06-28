@@ -17,7 +17,7 @@ export class QueryPostsDto {
   readonly page?: number
 
   @IsOptional()
-  @isBoolean()
+  @IsBoolean()
   @Type(() => Boolean)
   readonly closed?: boolean
 }
