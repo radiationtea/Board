@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, Max, Min } from 'class-validator'
+import { IsInt, IsOptional, Max, Min, IsBoolean } from 'class-validator'
 import { Expose, Type } from 'class-transformer'
 
 export class QueryPostsDto {
@@ -15,4 +15,9 @@ export class QueryPostsDto {
   @Min(0)
   @Type(() => Number)
   readonly page?: number
+
+  @IsOptional()
+  @isBoolean()
+  @Type(() => Boolean)
+  readonly closed?: boolean
 }

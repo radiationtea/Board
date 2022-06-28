@@ -35,7 +35,8 @@ export class PostsController {
       query.page,
       perPages,
       {
-        userId: res.locals.userId
+        userId: res.locals.userId,
+        closed: query.closed
       }
     )
 
@@ -56,7 +57,10 @@ export class PostsController {
   ): Promise<ResponseBody<{ posts: Posts[] }>> {
     const posts = await this.postsService.queryPosts(
       query.page,
-      perPages
+      perPages,
+      {
+        closed: query.closed
+      }
     )
 
     return {

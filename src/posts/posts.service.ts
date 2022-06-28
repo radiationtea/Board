@@ -25,7 +25,8 @@ export class PostsService {
   }
 
   queryPosts (page = 0, perPage = 10, filter?: {
-    userId?: string
+    userId?: string,
+    closed?: boolean
   }): Promise<Posts[]> {
     return this.posts.find({
       skip: page * perPage,
