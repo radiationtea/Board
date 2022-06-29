@@ -31,7 +31,12 @@ export class PostsService {
     return this.posts.find({
       skip: page * perPage,
       take: perPage,
-      where: filter || undefined,
+      where: filter
+        ? {
+            ...(filter.userId ? { userId: filter.userId } : {}),
+            ...(filter.closed ? { closed: filter.closed } : {})
+          }
+        : undefined,
       select: ['user', 'closed', 'postId', 'subCategory', 'createdAt']
     })
   }
