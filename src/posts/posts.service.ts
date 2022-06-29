@@ -37,8 +37,7 @@ export class PostsService {
             ...(filter.closed ? { closed: filter.closed } : {})
           }
         : undefined,
-      select: ['user', 'closed', 'postId', 'subCategory', 'createdAt'],
-      relations: ['subCategory.parent']
+      select: ['user', 'closed', 'postId', 'subCategory', 'createdAt']
     })
   }
 

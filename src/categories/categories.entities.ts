@@ -47,7 +47,7 @@ export class Subcategories {
   @Column()
   readonly score: number
 
-  @ManyToOne(() => Categories, (cate) => cate.children)
+  @ManyToOne(() => Categories, (cate) => cate.children, { eager: true })
   @JoinColumn({ name: 'categoryid' })
   readonly parent: Categories
 }
