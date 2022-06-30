@@ -28,8 +28,8 @@ export class Posts {
   @Column({ name: 'createdat', type: 'timestamp' })
   readonly createdAt: Date
 
-  @Column()
-  readonly closed: boolean
+  @Column({ type: 'bool', width: 1 })
+  readonly closed!: boolean
 
   @OneToMany(() => Files, (file) => file.post, { eager: true })
   readonly files: Files[]
