@@ -33,8 +33,8 @@ export class PostsService {
       take: perPage,
       where: filter
         ? {
-            ...(filter.userId ? { userId: filter.userId } : {}),
-            ...(filter.closed ? { closed: filter.closed } : {})
+            ...(filter.userId !== undefined ? { userId: filter.userId } : {}),
+            ...(filter.closed !== undefined ? { closed: filter.closed } : {})
           }
         : undefined,
       select: ['user', 'closed', 'postId', 'subCategory', 'createdAt'],
