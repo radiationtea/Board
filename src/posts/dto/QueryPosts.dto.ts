@@ -1,5 +1,5 @@
 import { IsInt, IsOptional, Max, Min, IsBoolean } from 'class-validator'
-import { Expose, Type } from 'class-transformer'
+import { Expose, Transform, Type } from 'class-transformer'
 
 export class QueryPostsDto {
   @IsOptional()
@@ -18,6 +18,9 @@ export class QueryPostsDto {
 
   @IsOptional()
   @IsBoolean()
-  @Type(() => Boolean)
+  @Transform(({ value }) => ({
+    true: true,
+    false: false
+  })[value])
   readonly closed?: boolean
 }
