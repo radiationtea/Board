@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { IntegrationsService } from 'src/integrations/intergrations.service'
 import { Repository } from 'typeorm'
 import { Categories, Subcategories } from './categories.entities'
 import { CreateCategoryDto } from './dto/createCategory.dto'
@@ -11,15 +12,18 @@ import { EditSubcategoryDto } from './dto/EditSubcategory.dto'
 export class CategoriesService {
   private categories: Repository<Categories>
   private subcategories: Repository<Subcategories>
+  private integrations: IntegrationsService
 
   constructor (
     @InjectRepository(Categories)
       categories: Repository<Categories>,
     @InjectRepository(Subcategories)
-      subcategories: Repository<Subcategories>
+      subcategories: Repository<Subcategories>,
+      integrations: IntegrationsService
   ) {
     this.subcategories = subcategories
     this.categories = categories
+    this.integrations = integrations
   }
 
   public listCategories () {
@@ -55,7 +59,13 @@ export class CategoriesService {
       ...data,
       parentId: categoryId
     })
-    return result.generatedMaps[0].subcategoryId
+
+    const subcategoryId = result.generatedMaps[0].subcategoryId
+
+    await this.integrations.requestCreatePerm(`CATEGORY:${subcategoryId}:READ`)
+    await this.integrations.requestCreatePerm(`CATEGORY:${subcategoryId}:WRITE`)
+
+    return subcategoryId
   }
 
   public async editCategory (categoryId: number, data: EditCategoryDto) {
